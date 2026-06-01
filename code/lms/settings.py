@@ -8,6 +8,7 @@ Melanjutkan dari Modul 04 (Django ORM) dengan tambahan:
 """
 
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -75,8 +76,6 @@ WSGI_APPLICATION = "lms.wsgi.application"
 # =============================================================================
 # Database - PostgreSQL (sesuai docker-compose.yml)
 # =============================================================================
-# Berbeda dengan Lab-compliance yang menggunakan SQLite,
-# lab ini menggunakan PostgreSQL agar optimasi index terlihat nyata.
 
 DATABASES = {
     "default": {
@@ -92,11 +91,10 @@ DATABASES = {
 
 # =============================================================================
 # Django Silk - Konfigurasi Profiling
-# Akses dashboard di: http://localhost:8000/silk/
 # =============================================================================
 
-SILKY_PYTHON_PROFILER = True   # Aktifkan function-level profiling
-SILKY_META = True              # Track query Silk sendiri (untuk transparansi)
+SILKY_PYTHON_PROFILER = True
+SILKY_META = True
 
 
 # =============================================================================
@@ -131,3 +129,62 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# =============================================================================
+# REDIS CACHE CONFIGURATION
+# =============================================================================
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f"redis://:{os.environ.get('REDIS_PASSWORD', '1234')}@{os.environ.get('REDIS_HOST', 'redis')}:6379/1",
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
+        'KEY_PREFIX': 'simple_lms'
+    }
+}
+
+CACHE_TTL = 60 * 5
+
+
+# =============================================================================
+# MONGODB CONFIGURATION
+# =============================================================================
+
+MONGO_HOST = os.environ.get('MONGO_HOST', 'mongodb')
+MONGO_PORT = int(os.environ.get('MONGO_PORT', 27017))
+MONGO_USER = os.environ.get('MONGO_USER', 'mongo')
+MONGO_PASSWORD = os.environ.get('MONGO_PASSWORD', '1234')
+MONGO_DB_NAME = 'simple_lms'
+
+
+# =============================================================================
+# CELERY CONFIGURATION
+# =============================================================================
+
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://:1234@redis:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://:1234@redis:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'update-course-stats-every-hour': {
+        'task': 'courses.tasks.update_course_statistics',
+        'schedule': crontab(minute=0, hour='*/1'),
+    },
+}
+
+
+# =============================================================================
+# EMAIL CONFIGURATION
+# =============================================================================
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@simplelms.com'
+BASE_URL = 'http://localhost:8000'
