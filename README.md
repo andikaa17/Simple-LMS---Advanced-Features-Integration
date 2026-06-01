@@ -1,6 +1,8 @@
 # Simple-LMS---Advanced-Features-Integration
-jalankan: docker compose up -d
-<img width="1208" height="140" alt="Cuplikan layar 2026-06-02 002906" src="https://github.com/user-attachments/assets/48a550b9-af2b-4e70-bf5c-09c5a87eb1e8" /># 
+Jalankan: docker compose up -d
+
+<img width="1190" height="227" alt="image" src="https://github.com/user-attachments/assets/ab3aec2c-1ac3-4c3a-aa4c-e5efe17b6b70" />
+
 
 
 ## 1. Cek container (harus 8 running)
