@@ -1,4 +1,7 @@
-<img width="1208" height="140" alt="Cuplikan layar 2026-06-02 002906" src="https://github.com/user-attachments/assets/48a550b9-af2b-4e70-bf5c-09c5a87eb1e8" /># Simple-LMS---Advanced-Features-Integration
+# Simple-LMS---Advanced-Features-Integration
+jalankan: docker compose up -d
+<img width="1208" height="140" alt="Cuplikan layar 2026-06-02 002906" src="https://github.com/user-attachments/assets/48a550b9-af2b-4e70-bf5c-09c5a87eb1e8" /># 
+
 
 ## 1. Cek container (harus 8 running)
 - docker ps
